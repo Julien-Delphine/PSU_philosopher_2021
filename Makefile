@@ -8,8 +8,11 @@
 NAMEPHILO	=	philo
 
 SRCSPHILO	=	src/main.c	\
+				src/start.c	\
+				src/engine.c	\
+				src/action.c	\
 
-CFLAGS	+=	-W -Wall -Wextra -Werror
+CFLAGS	+=	-W -Wall -Wextra -Werror -g
 CFLAGS	+=	-I include
 
 LDFLAGS	+=	-lpthread

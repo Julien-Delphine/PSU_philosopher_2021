@@ -18,7 +18,16 @@ void printHelp()
 
 int verifNumber(char **av)
 {
+    int philo = 0;
+    int eat = 0;
+
     if (atoi(av[2]) && atoi(av[4])) {
+        philo = atoi(av[2]);
+        eat = atoi(av[4]);
+        if (philo <= 1)
+            return (84);
+        if (eat <= 0)
+            return (84);
         printf("%s philosophers can eat %s times\n", av[2], av[4]);
         return (0);
     }
@@ -50,5 +59,8 @@ int main(int ac, char **av)
 {
     if (handleArg(ac, av) == 84)
         return (84);
+    else
+        if (startPhilo(av) == 84)
+            return (84);
     return (0);
 }
