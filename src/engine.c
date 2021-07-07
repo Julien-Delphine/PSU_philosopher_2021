@@ -7,16 +7,16 @@
 
 #include "philosphers.h"
 
-/*void checkState(philo_t *philo, int a, int b)
+void checkState(philo_t *philo, int a, int b)
 {
     if (philo->state == 2) {
         a = pthread_mutex_trylock(&philo->mutex);
         if (a != 0)
             b = pthread_mutex_trylock(&philo->next->mutex);
         if (a == 0 || b == 0)
-            think(philo, a, b);
+            think(philo, a);
     }
-}*/
+}
 
 void checkAction(philo_t *philo)
 {
@@ -24,21 +24,28 @@ void checkAction(philo_t *philo)
     int b = 0;
 
     if (philo->state == 0) {
-        eat(philo, a, b);
-        philo->timeEat++;
+        a = pthread_mutex_trylock(&philo->mutex);
+        b = pthread_mutex_trylock(&philo->next->mutex);
+        if (a == 0 && b == 0)
+            eat(philo);
+        else if (b != 0 && a == 0)
+            pthread_mutex_unlock(&philo->mutex);
+        else if (a != 0 && b == 0)
+            pthread_mutex_unlock(&philo->next->mutex);
     }
-    else if (philo->state == 2)
-        think(philo, a);
-    else
+    else if (philo->state == 1)
         chillMan(philo);
+    else
+        checkState(philo, a, b);
 }
 
 void *philoLoop(void *philoArg)
 {
     philo_t *philo = philoArg;
 
-    for (; philo->timeEat < philo->timeToEat;)
+    for (; philo->timeEat != philo->timeToEat;)
         checkAction(philo);
-    printf("G fini\n");
+    printf("ID: %d\nEat: %d\nRest:%d\nThink:%d\n\n", 
+    philo->id, philo->action->eat, philo->action->rest, philo->action->think);
     return (0);
 }

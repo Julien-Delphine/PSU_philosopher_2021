@@ -9,8 +9,10 @@
 
 void quitPhilo(philo_t *philo, arg_t *args)
 {
-    if (philo != NULL)
+    if (philo != NULL) {
+        clearAction(philo);
         free(philo);
+    }
     if (args != NULL)
         free(args);
 }
@@ -26,7 +28,6 @@ void initThread(philo_t *philo, arg_t *args)
     for (int i = 0; i < args->philo; i++) {
         if (pthread_create(&philo[i].thread, NULL, philoLoop, &philo[i]))
             fprintf(stderr, "ERROR: Thread creation failded\n");
-        pthread_mutex_init(&philo->mutex, NULL);
     }
     for (int i = 0; i < args->philo; i++)
         pthread_join(philo[i].thread, NULL);
@@ -45,7 +46,8 @@ int initPhilo(philo_t *philo, arg_t *args)
         philo[i].timeEat = 0;
         philo[i].timeToEat = args->eat;
         philo[i].next = &philo[i + 1];
-        pthread_mutex_init(&philo[i].mutex, NULL);
+        philo[i].mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+        initAction(philo, i);
     }
     philo[args->philo - 1].next = &philo[0];
     initThread(philo, args);

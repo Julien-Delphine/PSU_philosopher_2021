@@ -20,6 +20,13 @@ typedef struct arg_s
     int eat;
 } arg_t;
 
+typedef struct action_s
+{
+    int eat;
+    int rest;
+    int think;
+} action_t;
+
 typedef struct philo_s
 {
     int timeEat;
@@ -29,13 +36,16 @@ typedef struct philo_s
     pthread_mutex_t mutex;
     pthread_t thread;
     arg_t *args;
+    action_t *action;
     struct philo_s *next;
 } philo_t;
 
 void *philoLoop(void *philoArg);
 void think(philo_t *philo, int a);
-void eat(philo_t *philo, int a, int b);
+void eat(philo_t *philo);
 void chillMan(philo_t *philo);
 int startPhilo(char **av);
+void initAction(philo_t *philo, int i);
+void clearAction(philo_t *philo);
 
 #endif

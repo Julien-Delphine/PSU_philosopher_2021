@@ -7,29 +7,30 @@
 
 #include "philosphers.h"
 
-void takeChopstick(philo_t *philo, int a, int b)
+void initAction(philo_t *philo, int i)
 {
-    if (a == 0)
-        pthread_mutex_lock(&philo->mutex);
-    else if (b == 0)
-        pthread_mutex_lock(&philo->next->mutex);
+    philo[i].action = malloc(sizeof(action_t));
+    if (philo[i].action != NULL) {
+        philo[i].action->eat = 0;
+        philo[i].action->rest = 0;
+        philo[i].action->think = 0;
+    }
 }
 
-/*void giveChopstick(philo_t *philo)
+void clearAction(philo_t *philo)
 {
+    for (int i = 0; i < philo->args->philo; i++) {
+        if (philo[i].action != NULL)
+            free (philo[i].action);
+    }
+}
 
-}*/
-
-void eat(philo_t *philo, int a, int b)
+void eat(philo_t *philo)
 {
-    (void)a;
-    (void)b;
-    pthread_mutex_lock(&philo->mutex);
-    pthread_mutex_lock(&philo->next->mutex);
     philo->state = 1;
-    //takeChopstick(philo, a, b);
     sleep(2);
-    printf("ID: %d eat before end: %d\n", philo->id, philo->timeToEat - philo->timeEat);
+    philo->action->eat++;
+    philo->timeEat++;
     pthread_mutex_unlock(&philo->mutex);
     pthread_mutex_unlock(&philo->next->mutex);
 }
@@ -37,16 +38,15 @@ void eat(philo_t *philo, int a, int b)
 void chillMan(philo_t *philo)
 {
     sleep(2);
-    printf("Relax: %d\n", philo->id);
+    philo->action->rest++;
     philo->state = 2;
 }
 
 void think(philo_t *philo, int a)
 {
-    pthread_mutex_lock(&philo->mutex);
     philo->state = 0;
     sleep(2);
-    printf("Je pense donc je suis: %d\n", philo->id);
+    philo->action->think++;
     if (a == 0)
         pthread_mutex_unlock(&philo->mutex);
     else
