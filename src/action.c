@@ -28,7 +28,7 @@ void clearAction(philo_t *philo)
 void eat(philo_t *philo)
 {
     philo->state = 1;
-    sleep(2);
+    sleep(1);
     philo->action->eat++;
     philo->timeEat++;
     pthread_mutex_unlock(&philo->mutex);
@@ -37,15 +37,18 @@ void eat(philo_t *philo)
 
 void chillMan(philo_t *philo)
 {
-    sleep(2);
+    sleep(1);
     philo->action->rest++;
-    philo->state = 2;
+    if (rand() % 2 == 0)
+        philo->state = 2;
+    else
+        philo->state = 1;
 }
 
 void think(philo_t *philo, int a)
 {
     philo->state = 0;
-    sleep(2);
+    sleep(1);
     philo->action->think++;
     if (a == 0)
         pthread_mutex_unlock(&philo->mutex);

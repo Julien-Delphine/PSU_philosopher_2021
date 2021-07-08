@@ -44,7 +44,7 @@ void *philoLoop(void *philoArg);
 void think(philo_t *philo, int a);
 void eat(philo_t *philo);
 void chillMan(philo_t *philo);
-int startPhilo(char **av);
+int startPhilo(arg_t *args);
 void initAction(philo_t *philo, int i);
 void clearAction(philo_t *philo);
 

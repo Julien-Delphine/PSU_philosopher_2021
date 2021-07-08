@@ -24,21 +24,22 @@ void quitPhilo(philo_t *philo, arg_t *args)
         free(args);
 }
 
-void endThread(philo_t *philo)
+int endThread(philo_t *philo)
 {
     if (pthread_mutex_destroy(&philo->mutex) != 0)
-        fprintf(stderr, "ERROR: Mutex destroy failed\n");
+        return (84);
+    return (0);
 }
 
-void initThread(philo_t *philo, arg_t *args)
+int initThread(philo_t *philo, arg_t *args)
 {
     for (int i = 0; i < args->philo; i++) {
         if (pthread_create(&philo[i].thread, NULL, philoLoop, &philo[i]))
-            fprintf(stderr, "ERROR: Thread creation failded\n");
+            return (84);
     }
     for (int i = 0; i < args->philo; i++)
         pthread_join(philo[i].thread, NULL);
-    endThread(philo);
+    return (endThread(philo));
 }
 
 int initPhilo(philo_t *philo, arg_t *args)
@@ -57,24 +58,19 @@ int initPhilo(philo_t *philo, arg_t *args)
         initAction(philo, i);
     }
     philo[args->philo - 1].next = &philo[0];
-    initThread(philo, args);
-    return (0);
+    return (initThread(philo, args));
 }
 
-int startPhilo(char **av)
+int startPhilo(arg_t *args)
 {
     philo_t *philo = NULL;
-    arg_t *args = malloc(sizeof(arg_t));
 
-    if (args != NULL) {
-        args->philo = atoi(av[2]);
-        args->eat = atoi(av[4]);
-    }
     philo = malloc(sizeof(philo_t) * args->philo);
     if (philo == NULL)
         return (84);
-    printf("%s philosophers can eat %s times\n", av[2], av[4]);
-    initPhilo(philo, args);
+    printf("%d philosophers can eat %d times\n\n", args->philo, args->eat);
+    if (initPhilo(philo, args) == 84)
+        return (84);
     quitPhilo(philo, args);
     return (0);
 }

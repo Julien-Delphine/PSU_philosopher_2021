@@ -13,27 +13,36 @@ void printHelp()
     printf("\t./philo -p nbr_p -e nbr_e\n\n");
     printf("DESCRIPTION\n");
     printf("\t-p nbr_p  number of philosophers\n");
-    printf("\t-e nbr_e  maximum number times a philosopher eats before exiting the program\n");
+    printf("\t-e nbr_e  maximum number times a philosopher eats ");
+    printf("before exiting the program\n");
 }
 
-int verifNumber(char **av)
+int overflow(arg_t *args)
 {
-    int philo = 0;
-    int eat = 0;
+    if (args->philo > __INT_MAX__)
+        return (84);
+    else if (args->eat > __INT_MAX__)
+        return (84);
+    return (0);
+}
 
+int verifNumber(char **av, arg_t *args)
+{
     if (atoi(av[2]) && atoi(av[4])) {
-        philo = atoi(av[2]);
-        eat = atoi(av[4]);
-        if (philo <= 1)
+        args->philo = atoi(av[2]);
+        args->eat = atoi(av[4]);
+        if (args->philo <= 1)
             return (84);
-        if (eat <= 0)
+        else if (args->eat <= 0)
             return (84);
         return (0);
     }
+    if (overflow(args) == 84)
+        return (84);
     return (84);
 }
 
-int handleArg(int ac, char **av)
+int handleArg(int ac, char **av, arg_t *args)
 {
     int check = 0;
 
@@ -47,7 +56,7 @@ int handleArg(int ac, char **av)
         return (84);
     else {
         if (!strcmp(av[1], "-p") && !strcmp(av[3], "-e"))
-            check = verifNumber(av);
+            check = verifNumber(av, args);
         else
             return (84);
     }
@@ -56,10 +65,14 @@ int handleArg(int ac, char **av)
 
 int main(int ac, char **av)
 {
-    if (handleArg(ac, av) == 84)
+    arg_t *args = malloc(sizeof(arg_t));
+
+    if (args == NULL)
+        return (84);
+    if (handleArg(ac, av, args) == 84)
         return (84);
     else
-        if (startPhilo(av) == 84)
+        if (startPhilo(args) == 84)
             return (84);
     return (0);
 }
