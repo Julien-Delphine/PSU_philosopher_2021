@@ -28,7 +28,6 @@ int verifNumber(char **av)
             return (84);
         if (eat <= 0)
             return (84);
-        printf("%s philosophers can eat %s times\n", av[2], av[4]);
         return (0);
     }
     return (84);

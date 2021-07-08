@@ -9,6 +9,13 @@
 
 void quitPhilo(philo_t *philo, arg_t *args)
 {
+    int i = 0;
+
+    for (; i < args->philo - 1; i++)
+        printf("ID: %d\nEat: %d\nRest:%d\nThink:%d\n\n", philo[i].id, 
+        philo[i].action->eat, philo[i].action->rest, philo[i].action->think);
+    printf("ID: %d\nEat: %d\nRest:%d\nThink:%d\n", philo[i].id, 
+    philo[i].action->eat, philo[i].action->rest, philo[i].action->think);
     if (philo != NULL) {
         clearAction(philo);
         free(philo);
@@ -38,7 +45,7 @@ int initPhilo(philo_t *philo, arg_t *args)
 {
     philo->args = args;
     for (int i = 0; i != args->philo; i++) {
-        philo[i].id = i;
+        philo[i].id = (i + 1);
         if (rand() % 2 == 0)
             philo[i].state = 0;
         else
@@ -46,7 +53,7 @@ int initPhilo(philo_t *philo, arg_t *args)
         philo[i].timeEat = 0;
         philo[i].timeToEat = args->eat;
         philo[i].next = &philo[i + 1];
-        philo[i].mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+        pthread_mutex_init(&philo[i].mutex, NULL);
         initAction(philo, i);
     }
     philo[args->philo - 1].next = &philo[0];
@@ -66,6 +73,7 @@ int startPhilo(char **av)
     philo = malloc(sizeof(philo_t) * args->philo);
     if (philo == NULL)
         return (84);
+    printf("%s philosophers can eat %s times\n", av[2], av[4]);
     initPhilo(philo, args);
     quitPhilo(philo, args);
     return (0);

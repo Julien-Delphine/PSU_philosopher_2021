@@ -45,7 +45,5 @@ void *philoLoop(void *philoArg)
 
     for (; philo->timeEat != philo->timeToEat;)
         checkAction(philo);
-    printf("ID: %d\nEat: %d\nRest:%d\nThink:%d\n\n", 
-    philo->id, philo->action->eat, philo->action->rest, philo->action->think);
     return (0);
 }
